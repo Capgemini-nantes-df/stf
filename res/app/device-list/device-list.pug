@@ -54,3 +54,75 @@
               div.device-list-details-content(ng-if='activeTabs.details').selectable
 
                 device-list-details(tracker='tracker', columns='columns', sort='sort', filter='filter').selectable
+
+  .row.unselectable
+    .col-md-12
+      .widget-container.fluid-height.stf-device-list-tabs
+        .widget-content.padded
+          h3 Devices
+          button(ng-click='selectAll()').btn.btn-primary Select all devices
+          button(ng-click='deselectAll()').btn.btn-primary Deselect all devices
+
+  .row.unselectable
+    .col-md-12
+      .widget-container.fluid-height.stf-device-list-tabs
+        .widget-content.padded
+          h3 Browsers
+          .row
+            .col-md-4
+              form(enable-autofill, ng-submit='openURLAll()')
+                .input-group.url-input-container
+                  input.form-control(type='text', name='textURL', placeholder='http://...',
+                  autocomplete='url', ng-model='textURL', text-focus-select,
+                  autocapitalize='off', spellcheck='false', blur-element='blurUrl'
+                  accesskey='N', tabindex='10', ng-change='textUrlChanged()',
+                  focus-element='nav.focusUrl')
+                  img(ng-src='{{urlFavicon}}')
+
+                  .input-group-btn
+                    button(ng-click='openURLAll()', ng-disabled='!textURL', translate).btn.btn-primary-outline Open
+
+
+  .row.unselectable
+    .col-md-12
+      .widget-container.fluid-height(ng-controller='ScreenshotsCtrl').stf-screenshots
+       .widget-content.padded
+          h3 Screenshots
+        .heading
+          
+          button(ng-click='takeScreenshotAll()').btn.btn-primary Take Screenshot
+
+          .button-spacer
+
+          clear-button(ng-click='clearAll()', ng-disabled='!screenshotsAll.length')
+
+          .button-spacer
+
+          .pull-right
+            button.btn.btn-primary-outline.btn-sm.transparent-border(
+              ng-click='zoom({min: 80, step: -50})',
+              ng-disabled='!screenshotsAll.length')
+              i.fa.fa-minus
+
+            input(type='range', ng-model='screenShotSize', min='80', max='480', step='10',
+            ng-model-options='{ updateOn: "default blur", debounce: { default: 100, blur: 0} }',
+            ng-disabled='!screenshotsAll.length').zoom-range
+
+            button.btn.btn-primary-outline.btn-sm.transparent-border(
+              ng-click='zoom({max: 480, step: 50})',
+              ng-disabled='!screenshotsAll.length')
+              i.fa.fa-plus
+
+        .widget-content.padded
+          nothing-to-show(message='{{"No screenshots taken"|translate}}', icon='fa-camera', ng-show='!screenshotsAll.length')
+
+          ul.screenshots-icon-view.clear-fix.selectable
+            li.screenshots-icon-item(ng-repeat='shot in screenshotsAll').cursor-select
+              h5 {{shot.device.model}}
+              h6 {{ shot.body.date | date:'HH:mm:ss' }}
+              a(ng-href='{{ shot.body.href }}', target='_blank')
+                img(ng-src='{{ shot.body.href + shotSizeParameter(480, 1) }}',
+                ng-srcset='{{ shot.body.href + shotSizeParameter(480, 2) }} 2x').screenshot-image
+
+          .clearfix
+
